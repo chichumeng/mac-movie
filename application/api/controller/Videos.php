@@ -46,6 +46,40 @@ class Videos extends Base
         $this->responseJson(1,['videos'=>$resp]);
     }
 
+    public function detail(){
+        $id = input('id');
+        $video = Db::name('Vod')->field('*')->where(['vod_id'=>$id])->find();
+        if(empty($video)){
+            $this->responseJson(0,new \stdClass(),'未找到资源');
+            return;
+        }
+        $video['vod_content'] = str_replace('&nbsp;','',strip_tags($video['vod_content']));
+
+        if(!empty($video['vod_down_url'])){
+            $video['vod_down_list'] = $this->splitVideoUrl($video['vod_down_url']);
+            unset($video['vod_down_url']);
+        }
+
+        if(!empty($video['vod_play_url'])){
+            $video['vod_play_list'] = $this->splitVideoUrl($video['vod_play_url']);
+            unset($video['vod_play_url']);
+        }
+
+        $this->responseJson(1,['video'=>$video]);
+    }
+
+    public function splitVideoUrl($content){
+        $resp = [];
+        foreach (explode('#',$content) as $item){
+            $item = explode('$',$item);
+            if(empty($item[0]) || empty($item[1])){
+                continue;
+            }
+            $resp[] = ['name'=>$item[0] ?? '','url'=>$item[1] ?? ''];
+        }
+        return $resp;
+    }
+
 
     public function categories(){
         $categories = Db::name('Type')->field('type_id,type_name,type_sort,type_logo')->select();
