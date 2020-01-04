@@ -82,13 +82,13 @@ class Videos extends Base
 
         */
 
+        header('content-type:application/json;charset=utf-8',true);
+
         $perPage = input('per_page',10);
         $page = input('page',1);
         $order = 'vod_time desc';
 
         $videos = Db::name('Vod')->field('vod_id,type_id,type_id_1,vod_class,vod_pic,vod_actor,vod_director,vod_director,vod_area,vod_lang,vod_year,vod_score')->where($condition)->order($order)->limit(sprintf('%s,%s',$perPage * ($page-1),$perPage))->select();
-
-        header('content-type:application/json;charset=utf-8');
 
         $total = Db::name('Vod')->where($condition)->count();
         $resp = [
