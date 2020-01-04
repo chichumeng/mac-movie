@@ -20,6 +20,12 @@ class Videos extends Base
         if(input('ids')){
             $condition['vod_id'] = ['in',is_array(input('ids')) ? input('ids') : explode(',',input('ids'))];
         }
+        if(input('type_id')){
+            $condition['type_id'] = input('type_id');
+        }
+        if(input('search_key')){
+            $condition['vod_name'] = ['like', '%' . input('search_key') . '%'];
+        }
         /*
         $where = [];
         if (!empty($this->_param['ids'])) {
@@ -104,6 +110,7 @@ class Videos extends Base
             '_error_msg'=>'',
             'videos'=>$resp
         ]);
+        die;
     }
 
     public function videoJson($res)
